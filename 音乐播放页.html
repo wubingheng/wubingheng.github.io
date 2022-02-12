@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放页</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <link rel="stylesheet" href="./music.css">
+</head>
+
+<body>
+    <div class="bg"></div>
+    <main class="music_box">
+        <div class="header">
+
+            <img src="./返回.png"> 我的悲伤是水做的
+            <div class="name">泠鸢-2021</div>
+        </div>
+
+        <div class="content">
+            <div class="circle">
+                <audio src="./泠鸢yousa - 我的悲伤是水做的.mp3" type="audio/mpeg" style="display: none;" loop controls></audio>
+                <img class="fenmain" src="./3d6cf55f71aeba7096e70e01c51e55e.jpg">
+                <div class="little_circle"></div>
+                <div class="op"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="progress_bar">
+                <div></div>
+                <div class="shodow"></div>
+                <input type="range" class="range" min="1" max="100" value="0" step="0.1">
+            </div>
+
+            <div class="control">
+                <article class="icon lastOne"></article>
+                <div class="play">
+                    <div>
+                        <svg t="1642348831006" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3285" width="200" height="200"><path d="M128 138.666667c0-47.232 33.322667-66.666667 74.176-43.562667l663.146667 374.954667c40.96 23.168 40.853333 60.8 0 83.882666L202.176 928.896C161.216 952.064 128 932.565333 128 885.333333v-746.666666z" fill="#ffffff" p-id="3286"></path></svg>
+                        <svg t="1642381659875" class="icon change" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4890" width="200" height="200"><path d="M349.866667 149.333333h-14.933334c-21.333333 0-36.266667 14.933333-36.266666 34.133334v654.933333c0 19.2 14.933333 34.133333 34.133333 34.133333h14.933333c19.2 0 34.133333-14.933333 34.133334-34.133333V183.466667c2.133333-19.2-12.8-34.133333-32-34.133334z m341.333333 0h-14.933333c-21.333333 0-36.266667 14.933333-36.266667 34.133334v654.933333c0 19.2 14.933333 34.133333 34.133333 34.133333h14.933334c19.2 0 34.133333-14.933333 34.133333-34.133333V183.466667c2.133333-19.2-12.8-34.133333-32-34.133334z" p-id="4891" fill="#ffffff"></path></svg>
+                    </div>
+                </div>
+                <article class="icon nextOne"></article>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let flag = true;
+        let play = document.querySelector("audio")
+            // console.log($('img').eq(1)[0].src);
+            // $('img').eq(1)[0].src = "./返回.png"
+            // console.log($('img').eq(1)[0].src);
+            //点击播放键
+        $(".play").on("click", () => {
+            if (flag) {
+                play.play()
+                flag = !flag
+                $('.fenmain').css({
+                    'animation': "zhuan 10s linear infinite both",
+                    "animation-play-state": 'running'
+                })
+                $(".play div .icon:first-child").css({
+                    'display': 'none',
+                    'left': "7px"
+                })
+                $(".play div .change").css({
+                    'display': 'block'
+                })
+
+            } else {
+                play.pause()
+                flag = !flag
+                $('.fenmain').css({
+                    "animation-play-state": 'paused'
+                })
+                $(".play div .icon:first-child").css({
+                    'display': 'block',
+                    'left': "7px"
+                })
+                $(".play div .change").css({
+                    'display': 'none'
+                })
+            }
+        })
+
+        //按下播放键
+        $(".play").on('mousedown', () => {
+            $(".play div").css({
+                "box-shadow": " inset 3px 3px 3px rgba(0,0,0,0.05), inset -3px -3px 3px rgba(255,255,255,0.5)"
+            })
+        })
+
+        // 松开播放键
+        $(".play").on('mouseup', () => {
+            $(".play div").css({
+                "box-shadow": "inset 3px 3px 3px rgba(255,255,255,0.5), inset -3px -3px 3px rgba(0,0,0,0.05)"
+            })
+        })
+        $("body").on('mouseup', () => {
+            $(".play div").css({
+                "box-shadow": "inset 3px 3px 3px rgba(255,255,255,0.5), inset -3px -3px 3px rgba(0,0,0,0.05)"
+            })
+        })
+
+        //当音乐播放器加载完后,获取它那该死的总长度
+        play.ondurationchange = function(e) {
+            $(".range").prop("max", e.target.duration)
+        }
+
+        //播放的时候更新进度条的值
+        play.ontimeupdate = function(e) {
+            $(".range").prop("value", this.currentTime)
+            $(".progress_bar div:first-child").css({
+                'width': ($(".range").prop("value") / $(".range").prop("max")) * 260 + 'px'
+            })
+            if ($(".range").prop('value') == $(".range").prop('max')) {
+                console.log(1);
+            }
+        }
+
+        //当点击进度条时 , 设置音乐播放器的currentTime数值为进度条的value
+        $(".range").on("click", function(e) {
+            play.currentTime = e.target.value;
+            $(".progress_bar div:first-child").css({
+                'width': (e.target.value / e.target.max) * 260 + 'px'
+            })
+        })
+
+
+        $(".range").on("abort", function() {
+            $(".progress_bar div").css({
+                'width': '0px'
+            })
+            $('.fenmain').css({
+                "animation-play-state": 'paused'
+            })
+            $(".play div .icon:first-child").css({
+                'display': 'block',
+                'left': "7px"
+            })
+            $(".play div .change").css({
+                'display': 'none'
+            })
+        })
+
+        //当拖动进度条时,设置自定义进度条的宽度
+        $(".range").on("input", function(e) {
+            $(".progress_bar div:first-child").css({
+                'width': (e.target.value / e.target.max) * 260 + 'px'
+            })
+        })
+
+        //但鼠标停放在进度条时
+        $(".range").on("mousemove", function(e) {
+            $(".shodow").css({
+                'width': e.offsetX + 'px'
+            })
+        })
+        $(".range").on("mouseleave", () => {
+            $(".shodow").css({
+                'width': '0px'
+            })
+        })
+
+        //进度条控制限制
+        $(".range").on("mousedown", function() {
+            play.pause()
+        })
+        $(".range").on("mouseup", function() {
+            if (!flag) {
+                play.play()
+            }
+
+        })
+    </script>
+</body>
+
+</html>
